@@ -1,0 +1,15 @@
+{
+	"Create number paint": {
+		"scope": "dart",
+		"prefix": "numberpaint",
+		"body": [
+			"final numberPaint = TextPainter(",
+            "  text: TextSpan(",
+			"    text: n.toString(),",
+			"    style: const TextStyle(fontSize: 8, color: Colors.amber)),",
+            "  textDirection: TextDirection.ltr,",
+            "  textAlign: TextAlign.center);"
+		],
+		"description": "Create a number paint"
+	}
+}
