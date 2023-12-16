@@ -3,13 +3,93 @@
 		"scope": "dart",
 		"prefix": "numberpaint",
 		"body": [
-			"final numberPaint = TextPainter(",
-            "  text: TextSpan(",
-			"    text: n.toString(),",
-			"    style: const TextStyle(fontSize: 8, color: Colors.amber)),",
-            "  textDirection: TextDirection.ltr,",
-            "  textAlign: TextAlign.center);"
+			"void paintNumber(Canvas canvas, Offset offset, int number) {",
+			"	final numberPaint = TextPainter(",
+			"		text: TextSpan(",
+            "       	text: (number).toString(),",
+			"       	style: const TextStyle(fontSize: 10, color: Colors.amber)),",
+			"       textDirection: TextDirection.ltr,",
+			"       textAlign: TextAlign.center);",
+			
+			"   numberPaint.layout();"
+			"   numberPaint.paint(canvas, offset);"
+			"}"
 		],
 		"description": "Create a number paint"
-	}
+	},
+	"Direction Enum": {
+		"prefix": "direction",
+		"body": [
+		  "enum Direction {",
+		  "  right(),",
+		  "  up(),",
+		  "  left(),",
+		  "  bottom();",
+		  "",
+		  "  const Direction();",
+		  "",
+		  "  Direction getNextDirection() {",
+		  "    switch (this) {",
+		  "      case Direction.right:",
+		  "        return Direction.up;",
+		  "      case Direction.up:",
+		  "        return Direction.left;",
+		  "      case Direction.left:",
+		  "        return Direction.bottom;",
+		  "      case Direction.bottom:",
+		  "        return Direction.right;",
+		  "    }",
+		  "  }",
+		  "}"
+		],
+		"description": "Direction enum with getNextDirection method"
+	  },
+	  "Get Next Offset": {
+		"prefix": "getnextoffset",
+		"body": [
+		  "Offset getNextOffset(Offset baseOffset, Direction nextDirection) {",
+		  "  switch (nextDirection) {",
+		  "    case Direction.left:",
+		  "      return Offset(baseOffset.dx - pointSize, baseOffset.dy);",
+		  "    case Direction.up:",
+		  "      return Offset(baseOffset.dx, baseOffset.dy - pointSize);",
+		  "    case Direction.right:",
+		  "      return Offset(baseOffset.dx + pointSize, baseOffset.dy);",
+		  "    case Direction.bottom:",
+		  "      return Offset(baseOffset.dx, baseOffset.dy + pointSize);",
+		  "  }",
+		  "}"
+		],
+		"description": "Get next offset based on direction"
+	  },
+	  "Spiral Variable Declaration": {
+		"prefix": "spiralvardeclaration",
+		"body": [
+		  "var direction = Direction.right;",
+		  "var current = 1;",
+		  "var set = 1;",
+		  "var cycle = 1;",
+		  "",
+		  "var offset = Offset(size.width / 2, size.height / 2);"
+		],
+		"description": "Declaration of variables for a spiral"
+	  },
+	  "Spiral Logic": {
+		"prefix": "spirallogic",
+		"body": [
+		  "if (current < cycle) {",
+		  "  current++;",
+		  "} else if (set < 2) {",
+		  "  set++;",
+		  "  current = 1;",
+		  "  direction = direction.getNextDirection();",
+		  "} else {",
+		  "  set = 1;",
+		  "  current = 1;",
+		  "  cycle++;",
+		  "  direction = direction.getNextDirection();",
+		  "}"
+		],
+		"description": "Logic for spiral movement"
+	  }
 }
