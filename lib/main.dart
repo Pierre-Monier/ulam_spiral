@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:prime_numbers/prime_numbers.dart';
 
 class UlamSpiral extends CustomPainter {
   static const pointSize = 100;
@@ -40,8 +41,12 @@ class UlamSpiral extends CustomPainter {
   void paintNumber(Canvas canvas, Offset offset, int number) {
     final numberPaint = TextPainter(
         text: TextSpan(
-            text: (number).toString(),
-            style: const TextStyle(fontSize: 10, color: Colors.amber)),
+          text: (number).toString(),
+          style: TextStyle(
+            fontSize: 10,
+            color: number.isPrime ? Colors.amber : Colors.red,
+          ),
+        ),
         textDirection: TextDirection.ltr,
         textAlign: TextAlign.center);
 
