@@ -47,7 +47,7 @@
 	  "Get Next Offset": {
 		"prefix": "getnextoffset",
 		"body": [
-		  "Offset getNextOffset(Offset baseOffset, Direction nextDirection) {",
+		  "Offset getNextOffset(Offset baseOffset, Direction nextDirection, double pointSize) {",
 		  "  switch (nextDirection) {",
 		  "    case Direction.left:",
 		  "      return Offset(baseOffset.dx - pointSize, baseOffset.dy);",

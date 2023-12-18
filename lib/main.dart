@@ -1,54 +1,58 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:prime_numbers/prime_numbers.dart';
 
 class UlamSpiral extends CustomPainter {
-  static const pointSize = 3;
-
   @override
   void paint(Canvas canvas, Size size) {
-    var number = 1;
-
     var direction = Direction.right;
     var current = 1;
     var set = 1;
     var cycle = 1;
 
     var offset = Offset(size.width / 2, size.height / 2);
+    const maxNumber = 10000;
+    final pointSize = sqrt((size.width * size.height) / maxNumber);
 
-    for (var y = 0.0; y <= size.height; y += pointSize) {
-      for (var x = 0.0; x <= size.width; x += pointSize) {
-        paintNumber(canvas, offset, number);
-        offset = getNextOffset(offset, direction);
+    canvas.drawRect(Rect.largest, Paint()..color = Colors.black);
 
-        if (current < cycle) {
-          current++;
-        } else if (set < 2) {
-          set++;
-          current = 1;
-          direction = direction.getNextDirection();
-        } else {
-          set = 1;
-          current = 1;
-          cycle++;
-          direction = direction.getNextDirection();
-        }
+    for (var number = 1; number < maxNumber; number++) {
+      paintNumber(canvas, offset, number, pointSize);
+      offset = getNextOffset(offset, direction, pointSize);
 
-        number++;
+      if (current < cycle) {
+        current++;
+      } else if (set < 2) {
+        set++;
+        current = 1;
+        direction = direction.getNextDirection();
+      } else {
+        set = 1;
+        current = 1;
+        cycle++;
+        direction = direction.getNextDirection();
       }
     }
-
-    print(number);
   }
 
-  void paintNumber(Canvas canvas, Offset offset, int number) {
-    canvas.drawCircle(
-      offset,
-      pointSize / 2,
-      Paint()..color = number.isPrime ? Colors.white : Colors.black,
-    );
+  void paintNumber(Canvas canvas, Offset offset, int number, double pointSize) {
+    var factors = number.factors().length.toDouble();
+    factors--;
+
+    if (factors > 0) {
+      factors = pow(factors, (0.75)).toDouble();
+
+      canvas.drawCircle(
+        offset,
+        min(factors, pointSize).toDouble(),
+        Paint()..color = Colors.blue,
+      );
+    }
   }
 
-  Offset getNextOffset(Offset baseOffset, Direction nextDirection) {
+  Offset getNextOffset(
+      Offset baseOffset, Direction nextDirection, double pointSize) {
     switch (nextDirection) {
       case Direction.left:
         return Offset(baseOffset.dx - pointSize, baseOffset.dy);
@@ -90,7 +94,15 @@ enum Direction {
 }
 
 void main() {
-  runApp(CustomPaint(
-    painter: UlamSpiral(),
-  ));
+  runApp(
+    Center(
+      child: SizedBox(
+        width: 600,
+        height: 600,
+        child: CustomPaint(
+          painter: UlamSpiral(),
+        ),
+      ),
+    ),
+  );
 }
