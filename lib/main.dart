@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:prime_numbers/prime_numbers.dart';
 
 class UlamSpiral extends CustomPainter {
-  static const pointSize = 100;
+  static const pointSize = 3;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -36,22 +36,16 @@ class UlamSpiral extends CustomPainter {
         number++;
       }
     }
+
+    print(number);
   }
 
   void paintNumber(Canvas canvas, Offset offset, int number) {
-    final numberPaint = TextPainter(
-        text: TextSpan(
-          text: (number).toString(),
-          style: TextStyle(
-            fontSize: 10,
-            color: number.isPrime ? Colors.amber : Colors.red,
-          ),
-        ),
-        textDirection: TextDirection.ltr,
-        textAlign: TextAlign.center);
-
-    numberPaint.layout();
-    numberPaint.paint(canvas, offset);
+    canvas.drawCircle(
+      offset,
+      pointSize / 2,
+      Paint()..color = number.isPrime ? Colors.white : Colors.black,
+    );
   }
 
   Offset getNextOffset(Offset baseOffset, Direction nextDirection) {
