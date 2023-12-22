@@ -4,12 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:prime_numbers/prime_numbers.dart';
 
 class UlamSpiral extends CustomPainter {
-  const UlamSpiral(this.maxNumber);
-
-  final int maxNumber;
-
   @override
   void paint(Canvas canvas, Size size) {
+    const maxNumber = 10000;
+
     var direction = Direction.right;
     var current = 1;
     var set = 1;
@@ -96,7 +94,7 @@ class UlamSpiral extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant UlamSpiral oldDelegate) {
-    return oldDelegate.maxNumber != maxNumber;
+    return false;
   }
 }
 
@@ -124,57 +122,14 @@ enum Direction {
 
 void main() {
   runApp(
-    const App(),
-  );
-}
-
-class App extends StatefulWidget {
-  const App({super.key});
-
-  @override
-  State<App> createState() => _AppState();
-}
-
-class _AppState extends State<App> with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _animation;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _controller = AnimationController(
-      duration: const Duration(seconds: 3),
-      vsync: this,
-    );
-
-    _animation = Tween<double>(begin: 1, end: 10000).animate(
-        CurvedAnimation(parent: _controller, curve: Curves.easeInCubic));
-
-    _controller.forward();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
+    Center(
       child: SizedBox(
         width: 700,
         height: 700,
-        child: AnimatedBuilder(
-          animation: _animation,
-          builder: (BuildContext context, Widget? child) {
-            return CustomPaint(
-              painter: UlamSpiral(_animation.value.toInt()),
-            );
-          },
+        child: CustomPaint(
+          painter: UlamSpiral(),
         ),
       ),
-    );
-  }
+    ),
+  );
 }
