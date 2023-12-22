@@ -4,6 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:prime_numbers/prime_numbers.dart';
 
 class UlamSpiral extends CustomPainter {
+  const UlamSpiral(this.maxNumber);
+
+  final int maxNumber;
+
   @override
   void paint(Canvas canvas, Size size) {
     var direction = Direction.right;
@@ -12,13 +16,20 @@ class UlamSpiral extends CustomPainter {
     var cycle = 1;
 
     var offset = Offset(size.width / 2, size.height / 2);
-    const maxNumber = 10000;
     final pointSize = sqrt((size.width * size.height) / maxNumber);
 
-    canvas.drawRect(Rect.largest, Paint()..color = Colors.black);
+    const gradient = LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: [Color(0xFFE0FFFF), Color(0xFFB0E0E6)],
+      stops: [0.0, 1.0],
+    );
+    var rect = Rect.fromLTWH(0, 0, size.width, size.height);
+    var paint = Paint()..shader = gradient.createShader(rect);
+    canvas.drawRect(Rect.largest, paint);
 
     for (var number = 1; number < maxNumber; number++) {
-      paintNumber(canvas, offset, number, pointSize);
+      _paintNumber(canvas, offset, number, pointSize);
       offset = getNextOffset(offset, direction, pointSize);
 
       if (current < cycle) {
@@ -36,19 +47,37 @@ class UlamSpiral extends CustomPainter {
     }
   }
 
-  void paintNumber(Canvas canvas, Offset offset, int number, double pointSize) {
+  void _paintNumber(
+      Canvas canvas, Offset offset, int number, double pointSize) {
     var factors = number.factors().length.toDouble();
     factors--;
 
+    Color color;
+    if (_isPerfectSquare(factors.toInt())) {
+      color = Colors.purple;
+    } else {
+      int shade = (255 / pointSize * factors).toInt();
+      color = Color.fromARGB(255, 0, 0, shade);
+    }
+
     if (factors > 0) {
       factors = pow(factors, (0.75)).toDouble();
-
       canvas.drawCircle(
         offset,
-        min(factors, pointSize).toDouble(),
-        Paint()..color = Colors.blue,
+        factors.toDouble(),
+        Paint()..color = color,
       );
     }
+  }
+
+  bool _isPerfectSquare(int number) {
+    double sqrtValue = sqrt(number);
+
+    if (sqrtValue.isInfinite || sqrtValue.isNaN) {
+      return false;
+    }
+
+    return sqrtValue * sqrtValue == number;
   }
 
   Offset getNextOffset(
@@ -66,8 +95,8 @@ class UlamSpiral extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return false;
+  bool shouldRepaint(covariant UlamSpiral oldDelegate) {
+    return oldDelegate.maxNumber != maxNumber;
   }
 }
 
@@ -95,14 +124,57 @@ enum Direction {
 
 void main() {
   runApp(
-    Center(
+    const App(),
+  );
+}
+
+class App extends StatefulWidget {
+  const App({super.key});
+
+  @override
+  State<App> createState() => _AppState();
+}
+
+class _AppState extends State<App> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+      duration: const Duration(seconds: 3),
+      vsync: this,
+    );
+
+    _animation = Tween<double>(begin: 1, end: 10000).animate(
+        CurvedAnimation(parent: _controller, curve: Curves.easeInCubic));
+
+    _controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
       child: SizedBox(
-        width: 600,
-        height: 600,
-        child: CustomPaint(
-          painter: UlamSpiral(),
+        width: 700,
+        height: 700,
+        child: AnimatedBuilder(
+          animation: _animation,
+          builder: (BuildContext context, Widget? child) {
+            return CustomPaint(
+              painter: UlamSpiral(_animation.value.toInt()),
+            );
+          },
         ),
       ),
-    ),
-  );
+    );
+  }
 }
